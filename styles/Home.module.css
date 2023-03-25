@@ -1,0 +1,10 @@
+.container {
+  height: 100%;
+  text-align: -webkit-center;
+}
+
+.main {
+  width: 500px;
+  background-color: white;
+  height: 100%;
+}

@@ -1,14 +1,14 @@
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { FC } from "react";
-import { ActionFlat, Budget } from "../model/flat";
-import { UserDomain, UserType } from "../model/user";
+import { ActionFlat, Budget } from "../../model/flat";
+import { UserDomain, UserType } from "../../model/user";
 
 interface BudgetCompProps {
   onBudgetChange: any;
   user: UserDomain;
 }
 const BudgetComp: FC<BudgetCompProps> = ({ onBudgetChange, user }) => {
-  const budgetStyle = { "text-align": "left", margin: "20px" };
+  const budgetStyle = { textAlign: "left" as const, margin: "20px" };
   function shouldShowBudgetComp() {
     return user.type == UserType.BUYER && user.actionFlat == ActionFlat.BUY;
   }

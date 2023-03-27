@@ -1,12 +1,16 @@
 import { Stack, Chip, Slider, TextField } from "@mui/material";
 import Head from "next/head";
 import React, { useState } from "react";
-import ActionFlatComp from "./design/action-flat";
-import BudgetComp from "./design/budget";
-import UserTypeComp from "./design/user-type";
+import ActionFlatComp from "../../common/design/edit-post/action-flat";
+import BudgetComp from "../../common/design/edit-post/budget";
+import UserTypeComp from "../../common/design/edit-post/user-type";
 import styles from "./index.module.css";
-import { ActionFlat, FlatBHKTypes, FlatFurnishTypes } from "./model/flat";
-import { UserDomain, UserType } from "./model/user";
+import {
+  ActionFlat,
+  FlatBHKTypes,
+  FlatFurnishTypes,
+} from "../../common/model/flat";
+import { UserDomain, UserType } from "../../common/model/user";
 
 export const EditPostRoute = "/edit-post";
 function valuetext(value: number) {
@@ -32,18 +36,15 @@ const marks = [
   },
 ];
 export default function EditPost() {
-  const [userType, setUserType] = useState<UserType>(UserType.BUYER);
-  const [actionFlat, setActionFlat] = useState<ActionFlat>(ActionFlat.BUY);
+  const [userType, setUserType] = useState<UserType>(UserType.NONE);
+  const [actionFlat, setActionFlat] = useState<ActionFlat>(ActionFlat.NONE);
   const user: UserDomain = { type: userType, actionFlat: actionFlat };
-  const bhkStyle = { "text-align": "left", margin: "20px" };
-  const areaStyle = {
-    float: "left",
-    width: "80%",
+  const bhkStyle = { "text-align": "left" as const, margin: "20px" };
+  const areaLocStyle = {
+    textAlign: "left" as const,
     margin: "20px",
   };
-  const locStyle = { float: "left", width: "70%", margin: "10px 20px" };
-  const areaLocStyle = { height: "170px" };
-  const furnishStyle = { margin: "0 20px" };
+  const furnishStyle = { margin: "30px 20px 10px" };
   const agentOwnerStyle = { margin: "20px" };
   return (
     <div className={styles.container}>
@@ -64,47 +65,51 @@ export default function EditPost() {
             setActionFlat(selectedAction);
           }}
         />
-        <BudgetComp user={user} onBudgetChange={() => {}} />
+        {user.type != UserType.NONE && user.actionFlat != ActionFlat.NONE && (
+          <>
+            <BudgetComp user={user} onBudgetChange={() => {}} />
 
-        <Stack style={bhkStyle} direction="row" spacing={1}>
-          {FlatBHKTypes.map((item, index) => (
-            <Chip
-              label={item}
-              key={index}
-              variant="outlined"
-              onClick={() => {}}
-            />
-          ))}
-        </Stack>
+            <Stack style={bhkStyle} direction="row" spacing={1}>
+              {FlatBHKTypes.map((item, index) => (
+                <Chip
+                  label={item}
+                  key={index}
+                  variant="outlined"
+                  onClick={() => {}}
+                />
+              ))}
+            </Stack>
 
-        <div style={areaLocStyle}>
-          <Slider
-            style={areaStyle}
-            getAriaValueText={valuetext}
-            defaultValue={30}
-            marks={marks}
-          />
-          <TextField
-            style={locStyle}
-            id="standard-basic"
-            label="Preferred location?"
-            variant="standard"
-          />
-        </div>
-        <Stack style={furnishStyle} direction="row" spacing={1}>
-          {FlatFurnishTypes.map((item, index) => (
-            <Chip
-              label={item}
-              key={index}
-              variant="outlined"
-              onClick={() => {}}
-            />
-          ))}
-        </Stack>
-        <Stack style={agentOwnerStyle} direction="row" spacing={1}>
-          <Chip label="Agents" variant="outlined" onClick={() => {}} />
-          <Chip label="Owners" variant="outlined" onClick={() => {}} />
-        </Stack>
+            <div style={areaLocStyle}>
+              <Slider
+                className={styles.areaStyle}
+                getAriaValueText={valuetext}
+                defaultValue={30}
+                marks={marks}
+              />
+              <TextField
+                className={styles.locStyle}
+                id="standard-basic"
+                label="Preferred location?"
+                variant="standard"
+              />
+            </div>
+            <Stack style={furnishStyle} direction="row" spacing={1}>
+              {FlatFurnishTypes.map((item, index) => (
+                <Chip
+                  label={item}
+                  key={index}
+                  variant="outlined"
+                  onClick={() => {}}
+                />
+              ))}
+            </Stack>
+            <Stack style={agentOwnerStyle} direction="row" spacing={1}>
+              <Chip label="Agents" variant="outlined" onClick={() => {}} />
+              <Chip label="Owners" variant="outlined" onClick={() => {}} />
+            </Stack>
+          </>
+        )}
       </main>
     </div>
   );

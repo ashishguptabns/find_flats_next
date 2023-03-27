@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "travel-club-666"
+  },
+  "targets": {
+    "travel-club-666": {
+      "hosting": {
+        "find-flats": [
+          "find-flats"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

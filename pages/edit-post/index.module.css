@@ -10,3 +10,12 @@
   height: 100%;
   padding: 1px;
 }
+
+.areaStyle {
+  float: left;
+  width: 80%;
+}
+
+.locStyle {
+  margin-top: 10px;
+}

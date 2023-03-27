@@ -1,6 +1,6 @@
 import React, { FC } from "react";
-import { UserDomain, UserType } from "../model/user";
-import Button from "../../../common/design/button";
+import { UserDomain, UserType } from "../../model/user";
+import Button from "../button";
 
 interface UserTypeProps {
   user: UserDomain;

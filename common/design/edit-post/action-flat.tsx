@@ -1,7 +1,7 @@
 import { FC } from "react";
-import Button from "../../../common/design/button";
-import { ActionFlat } from "../model/flat";
-import { UserDomain, UserType } from "../model/user";
+import Button from "../button";
+import { ActionFlat } from "../../model/flat";
+import { UserDomain, UserType } from "../../model/user";
 interface ActionFlatProps {
   user: UserDomain;
   onSelect: any;

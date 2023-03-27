@@ -1,49 +1,45 @@
-import React, { FC, MouseEventHandler } from "react";
-import { User, UserType } from "../model/user";
+import React, { FC } from "react";
+import { UserDomain, UserType } from "../model/user";
 import Button from "../../../common/design/button";
 
 interface UserTypeProps {
-  user: User;
+  user: UserDomain;
   onSelect: any;
 }
 const UserTypeComp: FC<UserTypeProps> = ({ user, onSelect }) => {
   const style = {
-    padding: "80px 0 0 0",
+    padding: "20px 0 0 0",
   };
   const btnStyle = {
     margin: "20px",
   };
-  return user.type == UserType.NONE ? (
+  return (
     <div style={style}>
       <Button
         style={btnStyle}
-        text="I am looking for a flat"
-        variant="outlined"
+        text="Buyer"
+        variant={user.type != UserType.BUYER ? "outlined" : "contained"}
         onClick={() => {
-          onSelect(UserType.OWNER);
+          onSelect(UserType.BUYER);
         }}
       />
-      <br />
       <Button
         style={btnStyle}
-        text="I am a broker"
-        variant="outlined"
+        text="Agent"
+        variant={user.type != UserType.AGENT ? "outlined" : "contained"}
         onClick={() => {
-          onSelect(UserType.OWNER);
+          onSelect(UserType.AGENT);
         }}
       />
-      <br />
       <Button
         style={btnStyle}
-        text="I am an onwer"
-        variant="outlined"
+        text="Onwer"
+        variant={user.type != UserType.OWNER ? "outlined" : "contained"}
         onClick={() => {
           onSelect(UserType.OWNER);
         }}
       />
     </div>
-  ) : (
-    <></>
   );
 };
 

@@ -1,4 +1,4 @@
-import { ActionFlat } from "./flat";
+import { ActionFlat } from "./post";
 
 export enum UserType {
   OWNER = "OWNER",

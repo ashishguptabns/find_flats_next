@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { UserDomain, UserType } from "../../model/user";
+import { UserDomain, UserType } from "../../model/domain/user";
 import Button from "../button";
 
 interface UserTypeProps {

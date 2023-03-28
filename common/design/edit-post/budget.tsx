@@ -1,7 +1,12 @@
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { FC } from "react";
-import { ActionFlat, Budget } from "../../model/flat";
-import { UserDomain, UserType } from "../../model/user";
+import {
+  ActionFlat,
+  Budget,
+  BuyFlatBudgets as BuySellFlatBudgets,
+  RentFlatBudgets,
+} from "../../model/domain/post";
+import { UserDomain, UserType } from "../../model/domain/user";
 
 interface BudgetCompProps {
   onBudgetChange: any;
@@ -10,55 +15,52 @@ interface BudgetCompProps {
 const BudgetComp: FC<BudgetCompProps> = ({ onBudgetChange, user }) => {
   const budgetStyle = { textAlign: "left" as const, margin: "20px" };
   function shouldShowBudgetComp() {
-    return user.type == UserType.BUYER && user.actionFlat == ActionFlat.BUY;
+    return user.type != UserType.NONE && user.actionFlat != ActionFlat.NONE;
+  }
+  function getPriceHeading() {
+    switch (user.type) {
+      case UserType.BUYER:
+        return "What's your budget?";
+      default:
+        return "What's your ask?";
+    }
   }
 
+  function getPrices() {
+    switch (user.actionFlat) {
+      case ActionFlat.BUY:
+        return BuySellFlatBudgets;
+      case ActionFlat.SELL:
+        return BuySellFlatBudgets;
+      default:
+        return RentFlatBudgets;
+    }
+  }
+  var budgets: Budget[] = [];
   return (
     <>
       {shouldShowBudgetComp() && (
         <div style={budgetStyle}>
-          <h3>What's your budget?</h3>
+          <h3>{getPriceHeading()}</h3>
           <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={() => {
-                    onBudgetChange(Budget.TILL_30L);
-                  }}
-                />
-              }
-              label="Below 30 Lakhs"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={() => {
-                    onBudgetChange(Budget.TILL_50L);
-                  }}
-                />
-              }
-              label="30 - 50 Lakhs"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={() => {
-                    onBudgetChange(Budget.TILL_80L);
-                  }}
-                />
-              }
-              label="50 - 80 Lakhs"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={() => {
-                    onBudgetChange(Budget.ABOVE_80L);
-                  }}
-                />
-              }
-              label="Above 80 Lakhs"
-            />
+            {getPrices().map((item, index) => (
+              <FormControlLabel
+                key={index}
+                control={
+                  <Checkbox
+                    onChange={() => {
+                      if (budgets.includes(item)) {
+                        budgets.splice(index, 1);
+                      } else {
+                        budgets.push(item);
+                      }
+                      onBudgetChange(budgets);
+                    }}
+                  />
+                }
+                label={item.budget}
+              />
+            ))}
           </FormGroup>
         </div>
       )}

@@ -1,25 +1,37 @@
+import { UserDomain } from "./user";
+
 export enum ActionFlat {
   SELL = "SELL",
   RENT = "RENT",
   NONE = "NONE",
   BUY = "BUY",
 }
+export function getPrices(actionFlat: string): Budget[] {
+  switch (actionFlat) {
+    case ActionFlat.BUY:
+      return BuySellFlatBudgets;
+    case ActionFlat.SELL:
+      return BuySellFlatBudgets;
+    default:
+      return RentFlatBudgets;
+  }
+}
 
 export interface Budget {
+  checked: boolean;
   budget: string;
-  key: string;
 }
-export const BuyFlatBudgets = [
-  { budget: "Till 30 L", key: "TILL_30L" },
-  { budget: "30 - 50 L", key: "TILL_50L" },
-  { budget: "50 - 80 L", key: "TILL_80L" },
-  { budget: "Above 80 L", key: "ABOVE_80L" },
+export const BuySellFlatBudgets: Budget[] = [
+  { budget: "Till 30 L", checked: false },
+  { budget: "30 - 50 L", checked: false },
+  { budget: "50 - 80 L", checked: false },
+  { budget: "Above 80 L", checked: false },
 ];
-export const RentFlatBudgets = [
-  { budget: "Till 15,000", key: "TILL_15K" },
-  { budget: "15 - 25,000", key: "TILL_25K" },
-  { budget: "25 - 35,000", key: "TILL_35K" },
-  { budget: "Above 35,000", key: "ABOVE_35K" },
+export const RentFlatBudgets: Budget[] = [
+  { budget: "Till 15,000", checked: false },
+  { budget: "15 - 25,000", checked: false },
+  { budget: "25 - 35,000", checked: false },
+  { budget: "Above 35,000", checked: false },
 ];
 interface BHK {
   type: string;
@@ -31,7 +43,10 @@ export const BHKS = [
   { type: "3 BHK", chosen: false },
   { type: "4 BHK", chosen: false },
 ];
-export const FlatFurnishTypes = ["Unfurnished", "Furnished", "Semi furnished"];
+export enum FlatFurnishTypes {
+  Furnished = "Furnished",
+  Semi_Furnished = "Semi furnished",
+}
 
 export const Areas = [
   {
@@ -58,6 +73,7 @@ export function areaText(area: number) {
 }
 
 export interface PostDomain {
+  contactByAgents: boolean;
   furnishing?: string;
   location?: string;
   area: number;

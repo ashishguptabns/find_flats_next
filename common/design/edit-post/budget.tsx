@@ -1,18 +1,14 @@
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { FC } from "react";
-import {
-  ActionFlat,
-  Budget,
-  BuyFlatBudgets as BuySellFlatBudgets,
-  RentFlatBudgets,
-} from "../../model/domain/post";
+import { ActionFlat, Budget } from "../../model/domain/post";
 import { UserDomain, UserType } from "../../model/domain/user";
 
 interface BudgetCompProps {
   onBudgetChange: any;
   user: UserDomain;
+  budgets: Budget[];
 }
-const BudgetComp: FC<BudgetCompProps> = ({ onBudgetChange, user }) => {
+const BudgetComp: FC<BudgetCompProps> = ({ onBudgetChange, user, budgets }) => {
   const budgetStyle = { textAlign: "left" as const, margin: "20px" };
   function shouldShowBudgetComp() {
     return user.type != UserType.NONE && user.actionFlat != ActionFlat.NONE;
@@ -26,35 +22,21 @@ const BudgetComp: FC<BudgetCompProps> = ({ onBudgetChange, user }) => {
     }
   }
 
-  function getPrices() {
-    switch (user.actionFlat) {
-      case ActionFlat.BUY:
-        return BuySellFlatBudgets;
-      case ActionFlat.SELL:
-        return BuySellFlatBudgets;
-      default:
-        return RentFlatBudgets;
-    }
-  }
-  var budgets: Budget[] = [];
   return (
     <>
       {shouldShowBudgetComp() && (
         <div style={budgetStyle}>
           <h3>{getPriceHeading()}</h3>
           <FormGroup>
-            {getPrices().map((item, index) => (
+            {budgets.map((item, index) => (
               <FormControlLabel
                 key={index}
                 control={
                   <Checkbox
+                    checked={item.checked}
                     onChange={() => {
-                      if (budgets.includes(item)) {
-                        budgets.splice(index, 1);
-                      } else {
-                        budgets.push(item);
-                      }
-                      onBudgetChange(budgets);
+                      budgets[index].checked = !budgets[index].checked;
+                      onBudgetChange([...budgets]);
                     }}
                   />
                 }

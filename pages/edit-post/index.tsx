@@ -10,7 +10,9 @@ import {
   Areas,
   areaText,
   BHKS,
+  Budget,
   FlatFurnishTypes,
+  getPrices,
   PostDomain,
 } from "../../common/model/domain/post";
 import { UserDomain, UserType } from "../../common/model/domain/user";
@@ -24,6 +26,11 @@ export default function EditPost() {
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [actionFlat, setActionFlat] = useState<ActionFlat>(ActionFlat.NONE);
   const [bhks, setBhks] = useState(() => BHKS.map((item) => item));
+  const [furnishing, setFurnishing] = useState<string>("Semi furnished");
+  const [flatLocation, setFlatLocation] = useState<string>();
+  const [flatArea, setFlatArea] = useState<number>(10);
+  const [flatBudgets, setFlatBudgets] = useState<Budget[]>([]);
+  const [contactByAgents, setContactByAgents] = useState<boolean>(false);
 
   const user: UserDomain = { type: userType, actionFlat: actionFlat };
   const post: PostDomain = {
@@ -35,6 +42,7 @@ export default function EditPost() {
     owners: true,
     furnishing: undefined,
     location: undefined,
+    contactByAgents: false,
   };
   const bhkStyle = { textAlign: "left" as const, margin: "20px" };
   const areaLocStyle = {
@@ -57,28 +65,35 @@ export default function EditPost() {
       }
     });
     if (!bhkChosen) {
-      console.log(post.bhks);
+      console.log(post);
       snackMsg = "Please choose suitable bhk";
     }
 
+    flatBudgets.map((item) => {
+      if (item.checked) {
+        post.budgets.push(item.budget);
+      }
+    });
     if (post.budgets.length == 0) {
       snackMsg = "Please choose a budget";
       console.log(post);
     }
-
+    post.area = flatArea;
     if (post.area < 300) {
       snackMsg = "Please choose an area > 300 sqft";
       console.log(post);
     }
+    post.location = flatLocation;
     if (post.location == undefined) {
       snackMsg = "Please choose a location";
       console.log(post);
     }
+    post.furnishing = furnishing;
     if (post.furnishing == undefined) {
       snackMsg = "Please choose a furnishing";
       console.log(post);
     }
-
+    post.contactByAgents = contactByAgents;
     if (snackMsg != "") {
       setShowSnackBar(true);
       setSnackBarMsg(snackMsg);
@@ -112,6 +127,7 @@ export default function EditPost() {
         />
         <UserTypeComp
           onSelect={(selectedType: UserType) => {
+            setFlatBudgets(getPrices(actionFlat));
             setUserType(selectedType);
           }}
           user={user}
@@ -119,6 +135,7 @@ export default function EditPost() {
         <ActionFlatComp
           user={user}
           onSelect={(selectedAction: ActionFlat) => {
+            setFlatBudgets(getPrices(selectedAction));
             setActionFlat(selectedAction);
           }}
         />
@@ -126,9 +143,9 @@ export default function EditPost() {
           <>
             <BudgetComp
               user={user}
-              onBudgetChange={(budgets: string[]) => {
-                console.log(budgets);
-                post.budgets = budgets;
+              budgets={flatBudgets}
+              onBudgetChange={(budgets: Budget[]) => {
+                setFlatBudgets(budgets);
               }}
             />
 
@@ -155,6 +172,9 @@ export default function EditPost() {
                 className={styles.areaStyle}
                 getAriaValueText={areaText}
                 defaultValue={10}
+                onChange={(event: Event, newValue: number | number[]) => {
+                  setFlatArea((newValue as number) * 20);
+                }}
                 marks={Areas}
               />
               <TextField
@@ -162,22 +182,48 @@ export default function EditPost() {
                 id="standard-basic"
                 label="Preferred location?"
                 variant="standard"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFlatLocation(event.target.value);
+                }}
               />
             </div>
             <Stack style={furnishStyle} direction="row" spacing={1}>
-              {FlatFurnishTypes.map((item, index) => (
+              <Chip
+                label={FlatFurnishTypes.Semi_Furnished}
+                variant={
+                  furnishing == FlatFurnishTypes.Semi_Furnished
+                    ? "filled"
+                    : "outlined"
+                }
+                onClick={() => {
+                  setFurnishing(FlatFurnishTypes.Semi_Furnished);
+                }}
+              />
+              <Chip
+                label={FlatFurnishTypes.Furnished}
+                variant={
+                  furnishing == FlatFurnishTypes.Furnished
+                    ? "filled"
+                    : "outlined"
+                }
+                onClick={() => {
+                  setFurnishing(FlatFurnishTypes.Furnished);
+                }}
+              />
+            </Stack>
+            {user.type == UserType.BUYER && (
+              <Stack style={agentOwnerStyle} direction="row" spacing={1}>
                 <Chip
-                  label={item}
-                  key={index}
-                  variant="outlined"
-                  onClick={() => {}}
+                  label="Agents"
+                  variant={contactByAgents ? "filled" : "outlined"}
+                  onClick={() => {
+                    setContactByAgents(!contactByAgents);
+                  }}
                 />
-              ))}
-            </Stack>
-            <Stack style={agentOwnerStyle} direction="row" spacing={1}>
-              <Chip label="Agents" variant="outlined" onClick={() => {}} />
-              <Chip label="Owners" variant="outlined" onClick={() => {}} />
-            </Stack>
+                <Chip label="Owners" variant="filled" />
+              </Stack>
+            )}
+
             <Button
               style={{
                 right: "10%",

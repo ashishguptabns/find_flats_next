@@ -1,6 +1,12 @@
-export const OK = "OK";
-export const FAIL = "FAIL";
+export enum ResponseType {
+  OK = "OK",
+  FAIL = "FAIL",
+}
 
+export enum ResponseCode {
+  OK = 200,
+  FAIL = 500,
+}
 export interface ServerResponse {
   msg: any;
   status: string;

@@ -1,5 +1,3 @@
-import { UserDomain } from "./user";
-
 export enum ActionFlat {
   SELL = "SELL",
   RENT = "RENT",
@@ -33,11 +31,11 @@ export const RentFlatBudgets: Budget[] = [
   { budget: "25 - 35,000", checked: false },
   { budget: "Above 35,000", checked: false },
 ];
-interface BHK {
+export interface BHK {
   type: string;
   chosen: boolean;
 }
-export const BHKS = [
+export const BHKS: BHK[] = [
   { type: "1 BHK", chosen: false },
   { type: "2 BHK", chosen: false },
   { type: "3 BHK", chosen: false },
@@ -72,6 +70,47 @@ export function areaText(area: number) {
   return `${area * 20} sqft`;
 }
 
+export interface PostDTO {
+  contactByAgents: boolean;
+  furnishing?: string;
+  location?: string;
+  area: number;
+  bhks: string[];
+  actionFlat: string;
+  budgets: string[];
+  owners: boolean;
+}
+export function PostDomainToDTO(postDomain: PostDomain): PostDTO {
+  function getBhks(bhks: BHK[]): string[] {
+    var finalBHKs: string[] = [];
+    bhks.map((item) => {
+      if (item.chosen) {
+        finalBHKs.push(item.type);
+      }
+    });
+    return finalBHKs;
+  }
+  function getBudgets(budgets: Budget[]): string[] {
+    var finalBudgets: string[] = [];
+    budgets.map((item) => {
+      if (item.checked) {
+        finalBudgets.push(item.budget);
+      }
+    });
+    return finalBudgets;
+  }
+
+  return {
+    contactByAgents: postDomain.contactByAgents,
+    furnishing: postDomain.furnishing,
+    location: postDomain.location,
+    area: postDomain.area,
+    bhks: getBhks(postDomain.bhks),
+    actionFlat: postDomain.actionFlat,
+    budgets: getBudgets(postDomain.budgets),
+    owners: postDomain.owners,
+  };
+}
 export interface PostDomain {
   contactByAgents: boolean;
   furnishing?: string;
@@ -79,7 +118,6 @@ export interface PostDomain {
   area: number;
   bhks: BHK[];
   actionFlat: ActionFlat;
-  budgets: string[];
-  agents: boolean;
+  budgets: Budget[];
   owners: boolean;
 }

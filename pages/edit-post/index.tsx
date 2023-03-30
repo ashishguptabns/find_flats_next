@@ -1,6 +1,6 @@
 import { Stack, Chip, Slider, TextField, Snackbar } from "@mui/material";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ActionFlatComp from "../../common/design/edit-post/action-flat";
 import BudgetComp from "../../common/design/edit-post/budget";
 import UserTypeComp from "../../common/design/edit-post/user-type";

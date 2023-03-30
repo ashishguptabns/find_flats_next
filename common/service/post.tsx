@@ -3,8 +3,14 @@ import {
   ResponseType,
   ServerResponse,
 } from "../model/domain/response";
-import { ActionFlat, PostDomain, PostDomainToDTO } from "../model/domain/post";
+import {
+  ActionFlat,
+  PostDomain,
+  PostDomainToDTO,
+  PostDTO,
+} from "../model/domain/post";
 import { URL_SAVE_POST } from "../../pages/api/save-post";
+import { URL_FETCH_POSTS } from "../../pages/api/fetch-posts";
 
 export async function validateAndSavePost(
   postDomain: PostDomain,
@@ -54,5 +60,18 @@ export async function validateAndSavePost(
     } catch (err) {
       error({ status: ResponseType.FAIL, msg: JSON.stringify(err) });
     }
+  }
+}
+
+export async function fetchPosts(
+  success: (data: PostDTO[]) => void,
+  error: (msg: string) => void
+) {
+  try {
+    const response = await fetch(URL_FETCH_POSTS);
+    var postsData: PostDTO[] = (await response.json()) as PostDTO[];
+    success(postsData);
+  } catch (err) {
+    error(JSON.stringify(err));
   }
 }

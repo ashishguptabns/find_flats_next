@@ -51,11 +51,6 @@ export const Areas = [
     value: 15,
     label: "300 sqft",
   },
-
-  {
-    value: 40,
-    label: "800 sqft",
-  },
   {
     value: 60,
     label: "1200 sqft",

@@ -1,4 +1,11 @@
-import { Stack, Chip, Slider, TextField, Snackbar } from "@mui/material";
+import {
+  Stack,
+  Chip,
+  Slider,
+  TextField,
+  Snackbar,
+  CircularProgress,
+} from "@mui/material";
 import Head from "next/head";
 import React, { useState } from "react";
 import ActionFlatComp from "../../common/design/edit-post/action-flat";
@@ -21,12 +28,15 @@ import {
   ErrorResponse,
   ServerResponse,
 } from "../../common/model/domain/response";
+import { SNACK_TIMEOUT } from "../../common/utils/constants";
+import { useRouter } from "next/router";
 
 export const EditPostRoute = "/edit-post";
 
 export default function EditPost() {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
   const [userType, setUserType] = useState<UserType>(UserType.NONE);
-  const [showSnackBar, setShowSnackBar] = useState<boolean>(false);
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [actionFlat, setActionFlat] = useState<ActionFlat>(ActionFlat.NONE);
   const [bhks, setBhks] = useState(() => BHKS.map((item) => item));
@@ -58,11 +68,11 @@ export default function EditPost() {
       return;
     }
 
-    setShowSnackBar(false);
     setSnackBarMsg("");
   };
 
   function savePost() {
+    setLoading(true);
     validateAndSavePost(
       {
         actionFlat: actionFlat,
@@ -78,16 +88,20 @@ export default function EditPost() {
         showErrMsg(true, errResponse.msg);
       },
       (serverResponse: ServerResponse) => {
-        console.log(serverResponse.msg);
+        setSnackBarMsg(serverResponse.status);
+        router.back();
       }
     );
   }
 
   function showErrMsg(status: boolean, msg: string) {
-    setShowSnackBar(status);
     setSnackBarMsg(msg);
   }
-  return (
+  return loading ? (
+    <div className={styles.progress}>
+      <CircularProgress />
+    </div>
+  ) : (
     <div className={styles.container}>
       <Head>
         <title>Edit your requirement</title>
@@ -95,9 +109,9 @@ export default function EditPost() {
       </Head>
       <main className={styles.main}>
         <Snackbar
-          open={showSnackBar}
+          open={snackBarMsg !== ""}
           onClose={handleSnackClose}
-          autoHideDuration={1000}
+          autoHideDuration={SNACK_TIMEOUT}
           message={snackBarMsg}
         />
         <UserTypeComp

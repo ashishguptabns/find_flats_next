@@ -11,6 +11,12 @@
   padding: 1px;
   height: 100%;
 }
+
+.list {
+  height: 100%;
+  padding-bottom: 20px;
+}
+
 .postCard {
   text-align: left;
   margin: 20px;
@@ -18,25 +24,20 @@
 }
 
 .rowPostItem {
-  display: flex;
-  align-items: center;
-  height: 50px;
+  display: inline-block;
+  margin: 14px -8px -8px -8px;
 }
 
-.secChipRow {
-  padding: 10px 0px 0px 0px;
+.progress {
+  margin: 100px;
 }
-.allChips {
-  margin-left: -6px;
-  margin-bottom: -6px;
-}
+
 .chip {
   margin: 4px;
 }
 
 .footer {
   max-width: 500px;
-  background: white;
   position: sticky;
   bottom: 0;
   width: 100%;

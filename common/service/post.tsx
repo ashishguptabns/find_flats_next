@@ -1,7 +1,6 @@
 import {
   ErrorResponse,
-  FAIL,
-  OK,
+  ResponseType,
   ServerResponse,
 } from "../model/domain/response";
 import { ActionFlat, PostDomain, PostDomainToDTO } from "../model/domain/post";
@@ -24,33 +23,23 @@ export async function validateAndSavePost(
     }
   });
   if (!bhkChosen) {
-    console.log(postDomain);
     snackMsg = "Please choose suitable bhk";
   }
 
-  //   post.budgets.map((item, index) => {
-  //     if (!item.checked) {
-  //       post.budgets.splice(index, 1);
-  //     }
-  //   });
   if (postDomain.budgets.length == 0) {
     snackMsg = "Please choose a budget";
-    console.log(postDomain);
   }
   if (postDomain.area < 300) {
     snackMsg = "Please choose an area > 300 sqft";
-    console.log(postDomain);
   }
   if (postDomain.location == undefined) {
     snackMsg = "Please choose a location";
-    console.log(postDomain);
   }
   if (postDomain.furnishing == undefined) {
     snackMsg = "Please choose a furnishing";
-    console.log(postDomain);
   }
   if (snackMsg != "") {
-    error({ status: FAIL, msg: snackMsg });
+    error({ status: ResponseType.FAIL, msg: snackMsg });
   } else {
     try {
       const response = await fetch(URL_SAVE_POST, {
@@ -61,9 +50,9 @@ export async function validateAndSavePost(
         body: JSON.stringify(PostDomainToDTO(postDomain)),
       });
       const data = await response.json();
-      success({ msg: data, status: OK });
+      success({ msg: data, status: ResponseType.OK });
     } catch (err) {
-      error({ status: FAIL, msg: JSON.stringify(err) });
+      error({ status: ResponseType.FAIL, msg: JSON.stringify(err) });
     }
   }
 }

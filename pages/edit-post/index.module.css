@@ -11,12 +11,7 @@
   padding: 1px;
 }
 
-.areaStyle {
-  float: left;
-  width: 70%;
-}
-
 .locStyle {
-  margin-top: 10px;
-  width: 65%;
+  margin-top: 16px;
+  width: 70%;
 }

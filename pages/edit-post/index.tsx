@@ -1,6 +1,6 @@
 import { Stack, Chip, Slider, TextField, Snackbar } from "@mui/material";
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ActionFlatComp from "../../common/design/edit-post/action-flat";
 import BudgetComp from "../../common/design/edit-post/budget";
 import UserTypeComp from "../../common/design/edit-post/user-type";
@@ -13,10 +13,14 @@ import {
   Budget,
   FlatFurnishTypes,
   getPrices,
-  PostDomain,
 } from "../../common/model/domain/post";
 import { UserDomain, UserType } from "../../common/model/domain/user";
 import Button from "../../common/design/button";
+import { validateAndSavePost } from "../../common/service/post";
+import {
+  ErrorResponse,
+  ServerResponse,
+} from "../../common/model/domain/response";
 
 export const EditPostRoute = "/edit-post";
 
@@ -33,72 +37,18 @@ export default function EditPost() {
   const [contactByAgents, setContactByAgents] = useState<boolean>(false);
 
   const user: UserDomain = { type: userType, actionFlat: actionFlat };
-  const post: PostDomain = {
-    actionFlat: actionFlat,
-    budgets: [],
-    area: 0,
-    bhks: [],
-    agents: false,
-    owners: true,
-    furnishing: undefined,
-    location: undefined,
-    contactByAgents: false,
-  };
+
   const bhkStyle = { textAlign: "left" as const, margin: "20px" };
   const areaLocStyle = {
     textAlign: "left" as const,
     margin: "20px",
   };
+  const areaStyle = {
+    float: "left" as const,
+    width: "65%" as const,
+  };
   const furnishStyle = { margin: "30px 20px 10px" };
   const agentOwnerStyle = { margin: "20px" };
-  function validateAndSavePost() {
-    var snackMsg = "";
-    if (post.actionFlat == ActionFlat.NONE) {
-      snackMsg = "Choose an action";
-    }
-
-    post.bhks = bhks;
-    var bhkChosen = false;
-    post.bhks.map((item) => {
-      if (item.chosen) {
-        bhkChosen = true;
-      }
-    });
-    if (!bhkChosen) {
-      console.log(post);
-      snackMsg = "Please choose suitable bhk";
-    }
-
-    flatBudgets.map((item) => {
-      if (item.checked) {
-        post.budgets.push(item.budget);
-      }
-    });
-    if (post.budgets.length == 0) {
-      snackMsg = "Please choose a budget";
-      console.log(post);
-    }
-    post.area = flatArea;
-    if (post.area < 300) {
-      snackMsg = "Please choose an area > 300 sqft";
-      console.log(post);
-    }
-    post.location = flatLocation;
-    if (post.location == undefined) {
-      snackMsg = "Please choose a location";
-      console.log(post);
-    }
-    post.furnishing = furnishing;
-    if (post.furnishing == undefined) {
-      snackMsg = "Please choose a furnishing";
-      console.log(post);
-    }
-    post.contactByAgents = contactByAgents;
-    if (snackMsg != "") {
-      setShowSnackBar(true);
-      setSnackBarMsg(snackMsg);
-    }
-  }
 
   const handleSnackClose = (
     _event: React.SyntheticEvent | Event,
@@ -112,6 +62,31 @@ export default function EditPost() {
     setSnackBarMsg("");
   };
 
+  function savePost() {
+    validateAndSavePost(
+      {
+        actionFlat: actionFlat,
+        bhks: bhks,
+        budgets: flatBudgets,
+        area: flatArea,
+        owners: true,
+        furnishing: furnishing,
+        location: flatLocation,
+        contactByAgents: contactByAgents,
+      },
+      (errResponse: ErrorResponse) => {
+        showErrMsg(true, errResponse.msg);
+      },
+      (serverResponse: ServerResponse) => {
+        console.log(serverResponse.msg);
+      }
+    );
+  }
+
+  function showErrMsg(status: boolean, msg: string) {
+    setShowSnackBar(status);
+    setSnackBarMsg(msg);
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -169,7 +144,7 @@ export default function EditPost() {
 
             <div style={areaLocStyle}>
               <Slider
-                className={styles.areaStyle}
+                style={areaStyle}
                 getAriaValueText={areaText}
                 defaultValue={10}
                 onChange={(event: Event, newValue: number | number[]) => {
@@ -232,7 +207,7 @@ export default function EditPost() {
               text="Post"
               variant="contained"
               onClick={() => {
-                validateAndSavePost();
+                savePost();
               }}
             />
           </>

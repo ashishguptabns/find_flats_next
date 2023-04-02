@@ -14,12 +14,11 @@
 
 .list {
   height: 100%;
-  padding-bottom: 20px;
 }
 
 .postCard {
   text-align: left;
-  margin: 20px;
+  margin: 10px;
   white-space: pre-wrap;
 }
 
@@ -36,11 +35,30 @@
   margin: 4px;
 }
 
-.footer {
-  max-width: 500px;
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-  padding: 20px;
-  text-align: right;
+.fab {
+  position: fixed;
+  bottom: 20px;
+  margin-left: 150px;
+  z-index: 100;
+}
+
+.chatAction {
+  float: right;
+}
+.chatBtn {
+  font-weight: bold;
+}
+
+.divider {
+  margin-left: 60%;
+}
+
+@media (max-width: 500px) {
+  .fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  /* smartphones, iPhone, portrait 480x320 phones */
 }

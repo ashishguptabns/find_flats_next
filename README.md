@@ -13,7 +13,7 @@ Material UI
 3. Open termianl and run - npm run dev
 
 # Tests
-Not done yet
+npm run test
 
 # CI/CD 
 Not done yet

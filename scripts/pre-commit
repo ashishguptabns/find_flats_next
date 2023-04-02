@@ -1,0 +1,70 @@
+#!/bin/sh
+
+# format the code with 
+
+echo "---------running pre-commit hook"
+
+changed_files=$(git diff --cached --name-only --diff-filter=AM | grep '\.ts$')
+
+echo "|--------------------------------------------------------------------|"
+echo "files being committed"
+echo "$changed_files"
+echo "|--------------------------------------------------------------------|"
+
+npm run lint -- --fix 
+
+echo "---------running unit tests"
+
+# run all unit tests
+npm run test
+
+if [ $? -eq 1 ]; then
+    echo "|----------------------------------------------------|"
+    echo "| Unit tests failed, please check and fix your code. |"
+    echo "|----------------------------------------------------|"
+    exit 1
+else
+    echo "|-------------------------------------------|"
+    echo "| Committing your changes, all tests passed!! |"
+    echo "|-------------------------------------------|"
+#    exit 0
+fi
+
+echo "---------running instrumentation tests"
+
+# run all instrumentation tests
+npm run test:e2e
+
+if [ $? -eq 1 ]; then
+    echo "|----------------------------------------------------|"
+    echo "| Instrumentation tests failed, please check and fix your code. |"
+    echo "|----------------------------------------------------|"
+    exit 1
+else
+    echo "|-------------------------------------------|"
+    echo "| Committing your changes, all instrumentation tests passed!! |"
+    echo "|-------------------------------------------|"
+#    exit 0
+fi
+
+#generate the build
+echo "---------generate the build"
+npm run build
+
+
+# avoid commit to protected branches
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+PROTECTED_BRANCHES=("release" "master")
+
+for protected in "${PROTECTED_BRANCHES[@]}"; do
+	if [[ $BRANCH == *"$protected"* ]]; then
+		echo "|--------------------------------------------------------------------|"
+		echo "| Prevented commit to protected branch \"$BRANCH\" by pre-comit hook |"
+      		echo "| You can't commit directly to \"$BRANCH\" branch                    |"
+      		echo "|--------------------------------------------------------------------|"
+      		exit 1
+	fi
+done
+exit 0

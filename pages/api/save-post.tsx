@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ResponseCode } from "../../common/model/domain/response";
-import { baseUrl } from "../../common/utils/constants";
+import { baseUrl } from "../../utils/constants";
+import { ResponseCode } from "../../model/domain/response";
 
 export const URL_SAVE_POST = "api/save-post";
 const saveFlatPostUrl = `${baseUrl}/saveFlatPost`;

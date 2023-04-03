@@ -28,7 +28,7 @@
 }
 
 .progress {
-  margin: 100px;
+  margin: 10px;
 }
 
 .chip {
@@ -38,7 +38,7 @@
 .fab {
   position: fixed;
   bottom: 20px;
-  margin-left: 170px;
+  margin-left: 420px;
   z-index: 100;
 }
 

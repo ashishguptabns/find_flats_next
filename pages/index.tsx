@@ -1,8 +1,6 @@
 import Head from "next/head";
 import styles from "../pages/index.module.css";
 import { useEffect, useState } from "react";
-import { PostDTO } from "../common/model/domain/post";
-import { fetchPosts } from "../common/service/post";
 import {
   AppBar,
   Button,
@@ -16,21 +14,25 @@ import {
   IconButton,
   Link,
   List,
+  Skeleton,
   Snackbar,
   Toolbar,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { SNACK_TIMEOUT } from "../common/utils/constants";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import { PostDTO } from "../model/domain/post";
+import { SNACK_TIMEOUT } from "../utils/constants";
+import { fetchPostsUseCase } from "../service/post";
 
 export default function Home() {
+  const dividerStyle = { marginLeft: "60%" as const };
   const [snackBarMsg, setSnackBarMsg] = useState<string>("");
   const [flatPosts, setFlatPosts] = useState<PostDTO[]>([]);
   useEffect(() => {
     if (!flatPosts || flatPosts.length == 0) {
-      fetchPosts(success, error);
+      fetchPostsUseCase(success, error);
     }
   });
   const handleSnackClose = (
@@ -45,7 +47,6 @@ export default function Home() {
   };
   function success(postsData: PostDTO[]) {
     setFlatPosts(postsData);
-    console.log(postsData);
   }
   function error(msg: string) {
     console.log(msg);
@@ -58,11 +59,13 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className={styles.main}>
-          <Link className={styles.fab} href="/edit-post">
-            <Fab color="primary" aria-label="add">
-              <AddIcon />
-            </Fab>
-          </Link>
+          <div className={styles.fab}>
+            <Link href="/edit-post">
+              <Fab color="primary" aria-label="add">
+                <AddIcon />
+              </Fab>
+            </Link>
+          </div>
           <AppBar position="static">
             <Toolbar>
               <IconButton
@@ -70,12 +73,11 @@ export default function Home() {
                 edge="start"
                 color="inherit"
                 aria-label="menu"
+                onClick={() => {
+                  setSnackBarMsg("Work in progress");
+                }}
               >
-                <MenuIcon
-                  onClick={() => {
-                    setSnackBarMsg("Work in progress");
-                  }}
-                />
+                <MenuIcon />
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Chat and Find Flats
@@ -85,12 +87,11 @@ export default function Home() {
                 edge="start"
                 color="inherit"
                 aria-label="menu"
+                onClick={() => {
+                  setSnackBarMsg("Work in progress");
+                }}
               >
-                <ChatOutlinedIcon
-                  onClick={() => {
-                    setSnackBarMsg("Work in progress");
-                  }}
-                />
+                <ChatOutlinedIcon />
               </IconButton>
             </Toolbar>
           </AppBar>
@@ -100,12 +101,18 @@ export default function Home() {
             autoHideDuration={SNACK_TIMEOUT}
             message={snackBarMsg}
           />
-          {flatPosts.length == 0 && (
-            <div className={styles.progress}>
-              <CircularProgress />
-            </div>
-          )}
+
           <List className={styles.list}>
+            {flatPosts.length == 0 && (
+              <div className={styles.progress}>
+                <Skeleton variant="text" sx={{ fontSize: "3rem" }} />
+                <Skeleton variant="rounded" height={160} />
+                <Skeleton variant="text" sx={{ fontSize: "3rem" }} />
+                <Skeleton variant="rounded" height={160} />
+                <Skeleton variant="text" sx={{ fontSize: "3rem" }} />
+                <Skeleton variant="rounded" height={160} />
+              </div>
+            )}
             {flatPosts.map((post: PostDTO, index) => {
               return (
                 <Card className={styles.postCard} key={index}>
@@ -159,7 +166,9 @@ export default function Home() {
                       )}
                     </div>
                   </CardContent>
-                  <Divider className={styles.divider} />
+                  <div style={dividerStyle}>
+                    <Divider />
+                  </div>
                   <CardActions className={styles.chatAction}>
                     <Button
                       className={styles.chatBtn}

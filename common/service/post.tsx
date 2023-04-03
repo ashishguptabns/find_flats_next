@@ -17,34 +17,30 @@ export async function validateAndSavePost(
   error: (errResponse: ErrorResponse) => void,
   success: (serverResponse: ServerResponse) => void
 ) {
+  const postDTO = PostDomainToDTO(postDomain);
   var snackMsg = "";
-  if (postDomain.actionFlat == ActionFlat.NONE) {
+  if (postDTO.actionFlat == ActionFlat.NONE) {
     snackMsg = "Choose an action";
   }
 
-  var bhkChosen = false;
-  postDomain.bhks.map((item) => {
-    if (item.chosen) {
-      bhkChosen = true;
-    }
-  });
-  if (!bhkChosen) {
+  if (postDTO.bhks.length == 0) {
     snackMsg = "Please choose suitable bhk";
   }
 
-  if (postDomain.budgets.length == 0) {
+  if (postDTO.budgets.length == 0) {
     snackMsg = "Please choose a budget";
   }
-  if (postDomain.area < 300) {
+  if (postDTO.area < 300) {
     snackMsg = "Please choose an area > 300 sqft";
   }
-  if (postDomain.location == undefined) {
+  if (postDTO.location == undefined) {
     snackMsg = "Please choose a location";
   }
-  if (postDomain.furnishing == undefined) {
+  if (postDTO.furnishing == undefined) {
     snackMsg = "Please choose a furnishing";
   }
   if (snackMsg != "") {
+    console.log(snackMsg);
     error({ status: ResponseType.FAIL, msg: snackMsg });
   } else {
     try {
@@ -53,7 +49,7 @@ export async function validateAndSavePost(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(PostDomainToDTO(postDomain)),
+        body: JSON.stringify(postDTO),
       });
       const data = await response.json();
       success({ msg: data, status: ResponseType.OK });

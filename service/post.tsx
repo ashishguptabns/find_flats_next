@@ -9,10 +9,10 @@ import {
   PostDomainToDTO,
   PostDTO,
 } from "../model/domain/post";
-import { URL_SAVE_POST } from "../../pages/api/save-post";
-import { URL_FETCH_POSTS } from "../../pages/api/fetch-posts";
+import { URL_SAVE_POST } from "../pages/api/save-post";
+import { URL_FETCH_POSTS } from "../pages/api/fetch-posts";
 
-export async function validateAndSavePost(
+export async function validateAndSavePostUseCase(
   postDomain: PostDomain,
   error: (errResponse: ErrorResponse) => void,
   success: (serverResponse: ServerResponse) => void
@@ -59,7 +59,7 @@ export async function validateAndSavePost(
   }
 }
 
-export async function fetchPosts(
+export async function fetchPostsUseCase(
   success: (data: PostDTO[]) => void,
   error: (msg: string) => void
 ) {

@@ -8,28 +8,25 @@ import {
 } from "@mui/material";
 import Head from "next/head";
 import React, { useState } from "react";
-import ActionFlatComp from "../../common/design/edit-post/action-flat";
-import BudgetComp from "../../common/design/edit-post/budget";
-import UserTypeComp from "../../common/design/edit-post/user-type";
 import styles from "./index.module.css";
+import { useRouter } from "next/router";
+import ActionFlatComp from "../../design/edit-post/action-flat";
+import BudgetComp from "../../design/edit-post/budget";
+import UserTypeComp from "../../design/edit-post/user-type";
 import {
   ActionFlat,
-  Areas,
-  areaText,
   BHKS,
   Budget,
-  FlatFurnishTypes,
   getPrices,
-} from "../../common/model/domain/post";
-import { UserDomain, UserType } from "../../common/model/domain/user";
-import Button from "../../common/design/button";
-import { validateAndSavePost } from "../../common/service/post";
-import {
-  ErrorResponse,
-  ServerResponse,
-} from "../../common/model/domain/response";
-import { SNACK_TIMEOUT } from "../../common/utils/constants";
-import { useRouter } from "next/router";
+  areaText,
+  Areas,
+  FlatFurnishTypes,
+} from "../../model/domain/post";
+import { ErrorResponse, ServerResponse } from "../../model/domain/response";
+import { UserType, UserDomain } from "../../model/domain/user";
+import { SNACK_TIMEOUT } from "../../utils/constants";
+import Button from "../../design/button";
+import { validateAndSavePostUseCase } from "../../service/post";
 
 export const EditPostRoute = "/edit-post";
 
@@ -73,7 +70,7 @@ export default function EditPost() {
 
   function savePost() {
     setLoading(true);
-    validateAndSavePost(
+    validateAndSavePostUseCase(
       {
         actionFlat: actionFlat,
         bhks: bhks,
@@ -86,6 +83,7 @@ export default function EditPost() {
       },
       (errResponse: ErrorResponse) => {
         showErrMsg(true, errResponse.msg);
+        setLoading(false);
       },
       (serverResponse: ServerResponse) => {
         setSnackBarMsg(serverResponse.status);

@@ -2,7 +2,7 @@
 
 import { ActionFlat, PostDomain } from "../model/domain/post";
 import { ResponseType, ServerResponse } from "../model/domain/response";
-import { fetchPosts, validateAndSavePost } from "./post";
+import { fetchPostsUseCase, validateAndSavePostUseCase } from "./post";
 
 describe("validateAndSavePost_function", () => {
   // Tests that a valid postdomain object is saved successfully to the server and success callback function is called with server response. tags: [happy path]
@@ -28,7 +28,7 @@ describe("validateAndSavePost_function", () => {
     const errorMock = jest.fn();
 
     // Act
-    await validateAndSavePost(postDomain, errorMock, successMock);
+    await validateAndSavePostUseCase(postDomain, errorMock, successMock);
 
     // Assert
     expect(successMock).toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe("validateAndSavePost_function", () => {
     const errorMock = jest.fn();
 
     // Act
-    await validateAndSavePost(postDomain, errorMock, successMock);
+    await validateAndSavePostUseCase(postDomain, errorMock, successMock);
 
     // Assert
     expect(errorMock).toHaveBeenCalledWith({
@@ -88,7 +88,7 @@ describe("validateAndSavePost_function", () => {
     });
 
     // Act
-    await validateAndSavePost(postDomain, errorMock, successMock);
+    await validateAndSavePostUseCase(postDomain, errorMock, successMock);
 
     // Assert
     expect(errorMock).toHaveBeenCalledWith({
@@ -117,7 +117,7 @@ describe("validateAndSavePost_function", () => {
     };
     const error = jest.fn();
     const success = jest.fn();
-    await validateAndSavePost(postDomain, error, success);
+    await validateAndSavePostUseCase(postDomain, error, success);
     expect(error).toHaveBeenCalledWith({
       status: ResponseType.FAIL,
       msg: "Please choose an area > 300 sqft",
@@ -170,17 +170,17 @@ describe("validateAndSavePost_function", () => {
     };
     const error = jest.fn();
     const success = jest.fn();
-    await validateAndSavePost(postDomain1, error, success);
+    await validateAndSavePostUseCase(postDomain1, error, success);
     expect(error).toHaveBeenCalledWith({
       status: ResponseType.FAIL,
       msg: "Please choose a furnishing",
     });
-    await validateAndSavePost(postDomain2, error, success);
+    await validateAndSavePostUseCase(postDomain2, error, success);
     expect(error).toHaveBeenCalledWith({
       status: ResponseType.FAIL,
       msg: "Please choose a location",
     });
-    await validateAndSavePost(postDomain3, error, success);
+    await validateAndSavePostUseCase(postDomain3, error, success);
     expect(error).toHaveBeenCalledWith({
       status: ResponseType.FAIL,
       msg: "Please choose a budget",
@@ -219,7 +219,7 @@ describe("validateAndSavePost_function", () => {
     jest.spyOn(global, "fetch").mockResolvedValueOnce({
       json: jest.fn().mockResolvedValueOnce(response),
     } as any);
-    await validateAndSavePost(postDomain, error2, success2);
+    await validateAndSavePostUseCase(postDomain, error2, success2);
     expect(success2).toHaveBeenCalledWith(response);
     expect(error2).not.toHaveBeenCalled();
   });
@@ -244,7 +244,7 @@ describe("fetchPosts_function", () => {
         json: () => Promise.resolve(mockResponse),
       })
     );
-    await fetchPosts(mockSuccess, mockError);
+    await fetchPostsUseCase(mockSuccess, mockError);
     expect(mockSuccess).toHaveBeenCalledWith(mockResponse);
   });
 
@@ -258,7 +258,7 @@ describe("fetchPosts_function", () => {
         json: () => Promise.resolve(mockResponse),
       })
     );
-    await fetchPosts(mockSuccess, mockError);
+    await fetchPostsUseCase(mockSuccess, mockError);
     expect(mockSuccess).toHaveBeenCalledWith(mockResponse);
   });
 
@@ -270,7 +270,7 @@ describe("fetchPosts_function", () => {
     global.fetch = jest
       .fn()
       .mockImplementation(() => Promise.reject(mockResponse));
-    await fetchPosts(mockSuccess, mockError);
+    await fetchPostsUseCase(mockSuccess, mockError);
     expect(mockError).toHaveBeenCalledWith(JSON.stringify(mockResponse));
   });
 
@@ -280,7 +280,7 @@ describe("fetchPosts_function", () => {
     const mockError = jest.fn();
     let errMsg = "error_message";
     jest.spyOn(global, "fetch").mockRejectedValueOnce(errMsg);
-    await fetchPosts(mockSuccess, mockError);
+    await fetchPostsUseCase(mockSuccess, mockError);
     expect(mockSuccess).not.toHaveBeenCalled();
     expect(mockError).toHaveBeenCalledWith(JSON.stringify(errMsg));
   });
